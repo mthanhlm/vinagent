@@ -23,6 +23,12 @@ class SpecialNonExecNode(Node):
         if isinstance(other, str):
             return self.name == other
         return super().__eq__(other)
+    
+    def __hash__(self):
+        return hash(self.name)
+    
+    def __repr__(self):
+        return self.name
 
 
 # Create a single instance of StartNode to use as the START constant
