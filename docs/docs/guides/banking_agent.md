@@ -45,7 +45,7 @@ To finish any business query, This is agent workflow should be sequentially exec
 Before we dive into building, let's set up the necessary tools:
 
 ```python
-%pip install vinagent langchain_openai==0.3.7
+%pip install vinagent=0.0.5 langchain_openai==0.3.7
 ```
 
 You'll also need an [OpenAI key](https://platform.openai.com/api-keys) for the LLM models.
