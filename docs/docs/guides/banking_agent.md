@@ -76,6 +76,12 @@ llm = ChatOpenAI(
 
 For this tutorial, we'll use a realistic banking database with six interconnected tables that mirror real-world financial institutions:
 
+
+![](https://raw.githubusercontent.com/datascienceworld-kan/vinagent/refs/heads/main/docs/docs/get_started/images/financial_db.png)
+
+**Figure 1.** The database schema of the banking database.
+
+
 **List of tables**
 
 1. Customer
@@ -150,9 +156,6 @@ For this tutorial, we'll use a realistic banking database with six interconnecte
     * One-to-Many: An account can have multiple transactions.
     * FK: Transactions.AccountID → Account.AccountID
 
-![](https://raw.githubusercontent.com/datascienceworld-kan/vinagent/refs/heads/main/docs/docs/get_started/images/financial_db.png)
-
-**Figure 1.** The database schema of the banking database.
 
 We will run SQL code to create a fake finanice database. The SQL code for the fake database is available at [banking.sql](https://github.com/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/guides/banking.sql). Let's download them and save to your local machine at `./banking.sql`.
 
