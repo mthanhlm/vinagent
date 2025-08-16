@@ -241,7 +241,9 @@ class ToolManager:
                 destination_path = Path(
                     os.path.join(absolute_lib_path.parent, "tools", module_path.name)
                 )
-                if module_path.resolve(strict=False) == destination_path.resolve(strict=False):
+                if module_path.resolve(strict=False) == destination_path.resolve(
+                    strict=False
+                ):
                     pass
                 else:
                     shutil.copy2(module_path, destination_path)
@@ -290,7 +292,7 @@ class ToolManager:
         except (ValueError, SyntaxError):
             # Fallback: extract the first JSON object/list from text
             extracted = self.extract_tool(response_text)
-            print(f'extracted: {extracted}')
+            print(f"extracted: {extracted}")
             if extracted:
                 try:
                     new_tools = ast.literal_eval(extracted)

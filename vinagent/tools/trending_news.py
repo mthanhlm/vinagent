@@ -187,6 +187,7 @@ class TrendingTopics:
             logger.error("Error in get_summary for ID %d: %s", news_id, str(e))
             return {"success": False, "error": f"Server error: {str(e)}"}
 
+
 @primary_function
 def trending_news_google_tools(
     top_k: int = 5,

@@ -51,6 +51,8 @@ nav:
     - Financial Usercase:
       - Visualize and Analyze Stock: guides/analyze_stock_trending.md
       - Find Trending New: guides/trending_news.md
+    - Banking Agent:
+      - Banking SQL: guides/banking_agent.md
     - Research Usercase:
       - Research Agent: guides/paper_research.md
     - Legal Field:

@@ -246,6 +246,7 @@ class DeepSearch:
         content = f"# I. Planning\n{plans}\n\n# II. Results\n{chapters}"
         return content
 
+
 @primary_function
 def deepsearch_tool(
     query: str,

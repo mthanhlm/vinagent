@@ -26,9 +26,9 @@ class InConversationHistory:
     def append_left(self) -> None:
         self.history.appendleft()
 
-    def get_history(self, max_history: int=None) -> List[BaseMessage]:
+    def get_history(self, max_history: int = None) -> List[BaseMessage]:
         len_history = len(self.history)
         if max_history:
-            return list(self.history)[-min(max_history, len_history):]
+            return list(self.history)[-min(max_history, len_history) :]
         else:
             return list(self.history)

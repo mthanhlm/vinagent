@@ -2,10 +2,13 @@
     "search_api": {
         "tool_name": "search_api",
         "arguments": {
-            "query": "{}"
+            "query": {
+                "type": "Union[str, dict[str, str]]",
+                "value": "{}"
+            }
         },
         "return": "Any",
-        "docstring": "Search for an answer from a query string\n    Args:\n        query (dict[str, str]):  The input query to search\n    Returns:\n        The answer from search query",
+        "docstring": "Search for an answer from a query string\n        Args:\n            query (dict[str, str]):  The input query to search\n        Returns:\n            The answer from search query",
         "dependencies": [
             "os",
             "dotenv",
@@ -15,6 +18,39 @@
         ],
         "module_path": "vinagent.tools.websearch_tools",
         "tool_type": "module",
-        "tool_call_id": "tool_a8a597de-ff1c-4ac8-9bbe-443c4b960b36"
+        "tool_call_id": "tool_aa190200-eb31-4ef5-b308-5d9d7d11bca3"
+    },
+    "weight_of_bulldog": {
+        "tool_name": "weight_of_bulldog",
+        "arguments": {},
+        "return": "25",
+        "docstring": "The weight of a bulldog",
+        "dependencies": [],
+        "module_path": "vinagent.tools.average_dogs",
+        "tool_type": "module",
+        "tool_call_id": "tool_97492205-8683-45c4-bf12-e70c8990c27c"
+    },
+    "weight_of_husky": {
+        "tool_name": "weight_of_husky",
+        "arguments": {},
+        "return": "20",
+        "docstring": "The weight of a husky",
+        "dependencies": [],
+        "module_path": "vinagent.tools.average_dogs",
+        "tool_type": "module",
+        "tool_call_id": "tool_5ef8be21-8aaf-49a1-ac11-e2becd376d21"
+    },
+    "average_weight_of_two_dogs": {
+        "tool_name": "average_weight_of_two_dogs",
+        "arguments": {
+            "weight1": 0.0,
+            "weight2": 0.0
+        },
+        "return": "(weight1 + weight2) / 2",
+        "docstring": "The average weight of two dogs",
+        "dependencies": [],
+        "module_path": "vinagent.tools.average_dogs",
+        "tool_type": "module",
+        "tool_call_id": "tool_2b9b2105-d18a-497f-b497-d1fc212cdd0f"
     }
 }

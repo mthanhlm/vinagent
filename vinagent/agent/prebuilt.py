@@ -2,6 +2,7 @@ from typing_extensions import override
 from vinagent.agent.agent import Agent
 import json
 
+
 class ReactAgent(Agent):
     @override
     def prompt_template(
@@ -30,9 +31,7 @@ class ReactAgent(Agent):
             "Let's consider to memory and user_id:\n"
             f"{memory}\n"
             f"- user_id: {user_id}\n"
-
             "Use the following format:\n"
-
             "Question: the input question you must answer\n"
             "Thought: you should always think about what to do\n"
             f"Action: the action to take, should be one of [{tool_names}]\n"
@@ -48,10 +47,8 @@ class ReactAgent(Agent):
             "... (this Thought/Action/Action Input/Observation can repeat N times)\n"
             "Thought: I now know the final answer\n"
             "Final Answer: the final answer to the original input question\n"
-
             "Begin!\n"
-
             f"Question: {query}\n"
             "Thought:"
-        )    
+        )
         return prompt

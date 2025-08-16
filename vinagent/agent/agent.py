@@ -1,7 +1,7 @@
 import asyncio
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Awaitable, List, AsyncGenerator
+from typing import Any, Awaitable, List, AsyncGenerator, TypedDict
 from typing_extensions import is_typeddict
 from langchain_together import ChatTogether
 from langchain_core.language_models.base import BaseLanguageModel
@@ -14,7 +14,6 @@ from langgraph.checkpoint.memory import MemorySaver
 import logging
 from pathlib import Path
 from typing import Union
-from typing_extensions import is_typeddict
 import mlflow
 from mlflow.entities import SpanType
 
@@ -23,6 +22,7 @@ from vinagent.memory.memory import Memory
 from vinagent.memory.history import InConversationHistory
 from vinagent.mcp.client import DistributedMCPClient
 from vinagent.graph.function_graph import FunctionStateGraph
+from vinagent.graph.operator import FlowStateGraph
 from vinagent.oauth2.client import AuthenCard
 
 # Setup logging
@@ -231,7 +231,7 @@ class Agent(AgentMeta):
             logger.info(f"Successfully connected to mcp server!")
         return "Successfully connected to mcp server!"
 
-    def initialize_flow(self, state_schema: type[Any], config_schema: type[Any]):
+    def initialize_flow(self, state_schema: TypedDict, config_schema: TypedDict):
         # Validate state_schema if provided
         if state_schema is not None and not is_typeddict(state_schema):
             raise TypeError("state_schema must be a TypedDict subclass")
@@ -240,14 +240,16 @@ class Agent(AgentMeta):
         if config_schema is not None and not is_typeddict(config_schema):
             raise TypeError("config_schema must be a TypedDict subclass")
 
-        if self.flow:
-            self.graph = FunctionStateGraph(
-                state_schema=state_schema, config_schema=config_schema
-            )
-            self.checkpoint = MemorySaver()
-            self.compiled_graph = self.graph.compile(
-                checkpointer=self.checkpoint, flow=self.flow
-            )
+        self.graph = (
+            FunctionStateGraph(state_schema=state_schema, config_schema=config_schema)
+            if isinstance(self.flow, FunctionStateGraph)
+            else FlowStateGraph(state_schema=state_schema, config_schema=config_schema)
+        )
+
+        self.checkpoint = MemorySaver()
+        self.compiled_graph = self.graph.compile(
+            checkpointer=self.checkpoint, flow=self.flow
+        )
 
     def register_tools(self, tools: List[str]) -> Any:
         """
@@ -326,7 +328,7 @@ class Agent(AgentMeta):
         secret_key: str = None,
         max_iterations: int = 10,  # Add max iterations to prevent infinite loops
         is_tool_formatted: bool = True,
-        max_history: int=None,
+        max_history: int = None,
         **kwargs,
     ) -> Any:
         """
@@ -363,15 +365,25 @@ class Agent(AgentMeta):
 
         try:
             if hasattr(self, "compiled_graph"):
-                if "config" in kwargs:
-                    config = kwargs["config"]
-                else:
-                    config = {
+                config = (
+                    kwargs["config"]
+                    if "config" in kwargs
+                    else {
                         "configurable": {"user_id": user_id},
                         "thread_id": "123",
-                    }  # Default config
+                    }
+                )
+
+                input_state = (
+                    kwargs["input_state"]
+                    if "input_state" in kwargs
+                    else {"messages": [{"role": "user", "content": query}]}
+                )
+
                 try:
-                    result = self.compiled_graph.invoke(input=query, config=config)
+                    result = self.compiled_graph.invoke(
+                        input=input_state, config=config
+                    )
                     self.in_conversation_history.add_message(result)
                     if self.memory and is_save_memory:
                         self.save_memory(message=result, user_id=self._user_id)
@@ -403,7 +415,9 @@ class Agent(AgentMeta):
                     self.in_conversation_history.add_messages(messages)
 
                     # Get LLM response
-                    history = self.in_conversation_history.get_history(max_history=max_history)
+                    history = self.in_conversation_history.get_history(
+                        max_history=max_history
+                    )
                     response = self.llm.invoke(history)
                     self.in_conversation_history.add_message(response)
 
@@ -452,18 +466,19 @@ class Agent(AgentMeta):
                         content=f"Based on the previous tool executions, please provide a final response to: {query}"
                     )
                     self.in_conversation_history.add_message(user_query)
-                    history = self.in_conversation_history.get_history(max_history=max_history)
+                    history = self.in_conversation_history.get_history(
+                        max_history=max_history
+                    )
                     final_message = self.llm.invoke(history)
                     self.in_conversation_history.add_message(final_message)
                 else:
                     final_message = tool_message
-                
+
                 # Save memory
                 if self.memory and is_save_memory:
                     self.save_memory(message=final_message, user_id=self._user_id)
 
                 return final_message
-
 
         except (json.JSONDecodeError, KeyError, ValueError) as e:
             logger.error(f"Tool calling failed: {str(e)}")
@@ -514,17 +529,25 @@ class Agent(AgentMeta):
         try:
             if hasattr(self, "compiled_graph"):
                 result = []
-                if "config" in kwargs:
-                    config = kwargs["config"]
-                else:
-                    config = {
+                config = (
+                    kwargs["config"]
+                    if "config" in kwargs
+                    else {
                         "configurable": {"user_id": user_id},
                         "thread_id": "123",
-                    }  # Default config
-                for chunk in self.compiled_graph.stream(input=query, config=config):
+                    }
+                )
+                input_state = (
+                    kwargs["input_state"]
+                    if "input_state" in kwargs
+                    else {"messages": [{"role": "user", "content": query}]}
+                )
+                for chunk in self.compiled_graph.stream(
+                    input=input_state, config=config
+                ):
                     for v in chunk.values():
                         if v:
-                            result += v
+                            result += v["messages"]
                             yield v
                 if self.memory and is_save_memory:
                     self.save_memory(message=result, user_id=self._user_id)
@@ -558,7 +581,9 @@ class Agent(AgentMeta):
 
                     # Accumulate streamed content
                     full_content = AIMessageChunk(content="")
-                    history = self.in_conversation_history.get_history(max_history=max_history)
+                    history = self.in_conversation_history.get_history(
+                        max_history=max_history
+                    )
                     for chunk in self.llm.stream(history):
                         full_content += chunk
                         yield chunk
@@ -612,7 +637,9 @@ class Agent(AgentMeta):
                             f"Based on the previous tool executions, please provide a final response to: {query}"
                         )
                         self.in_conversation_history.add_message(final_message_content)
-                        history = self.in_conversation_history.get_history(max_history=max_history)
+                        history = self.in_conversation_history.get_history(
+                            max_history=max_history
+                        )
                         full_content = AIMessageChunk(content="")
                         for chunk in self.llm.stream(history):
                             full_content += chunk
@@ -642,7 +669,7 @@ class Agent(AgentMeta):
     ) -> Any:
         """
         Answer the user query asynchronously with continuous tool calling capability.
-        
+
         Args:
             query (str): The input query or task description provided by the user.
             is_save_memory (bool, optional): Flag to determine if the conversation should be saved to memory. Defaults to False.
@@ -674,17 +701,30 @@ class Agent(AgentMeta):
 
         try:
             if hasattr(self, "compiled_graph"):
-                if "config" in kwargs:
-                    config = kwargs["config"]
-                else:
-                    config = {
+                config = (
+                    kwargs["config"]
+                    if "config" in kwargs
+                    else {
                         "configurable": {"user_id": user_id},
                         "thread_id": "123",
-                    }  # Default config
-                result = await self.compiled_graph.ainvoke(input=query, config=config)
-                if self.memory and is_save_memory:
-                    self.save_memory(message=result, user_id=self._user_id)
-                return result
+                    }
+                )
+
+                input_state = (
+                    kwargs["input_state"]
+                    if "input_state" in kwargs
+                    else {"messages": [{"role": "user", "content": query}]}
+                )
+                try:
+                    result = await self.compiled_graph.ainvoke(
+                        input=input_state, config=config
+                    )
+                    self.in_conversation_history.add_message(result)
+                    if self.memory and is_save_memory:
+                        self.save_memory(message=result, user_id=self._user_id)
+                    return result
+                except ValueError as e:
+                    logger.error(f"Error in compiled_graph.invoke: {e}")
             else:
                 # Initialize conversation with original query
                 current_query = query
@@ -710,10 +750,13 @@ class Agent(AgentMeta):
 
                     # Add conversation history to messages
                     self.in_conversation_history.add_messages(messages)
-                    history = self.in_conversation_history.get_history(max_history=max_history)
+                    history = self.in_conversation_history.get_history(
+                        max_history=max_history
+                    )
 
                     # Get LLM response
-                    response = await self.llm.ainvoke(history)
+                    response = asyncio.to_thread(self.llm.ainvoke(input=history))
+                    # response = await self.llm.ainvoke(history)
                     self.in_conversation_history.add_message(response)
 
                     # Extract tool call from response
@@ -758,7 +801,9 @@ class Agent(AgentMeta):
                     content=f"Based on the previous tool executions, please provide a final response to: {query}"
                 )
                 self.in_conversation_history.add_message(user_query)
-                history = self.in_conversation_history.get_history(max_history=max_history)
+                history = self.in_conversation_history.get_history(
+                    max_history=max_history
+                )
                 if is_tool_formatted:
                     final_message = self.llm.invoke(history)
                     self.in_conversation_history.add_message(final_message)

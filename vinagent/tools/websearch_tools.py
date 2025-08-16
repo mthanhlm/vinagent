@@ -20,6 +20,7 @@ class WebSearchClient:
         result = self.tavily_client.search(query_string, include_answer=True)
         return result["answer"]
 
+
 @primary_function
 def search_api(query: Union[str, dict[str, str]]) -> Any:
     """
