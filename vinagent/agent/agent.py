@@ -422,7 +422,11 @@ class Agent(AgentMeta):
                     self.in_conversation_history.add_message(response)
 
                     # Extract tool call from response
-                    tool_data = self.tools_manager.extract_tool(response.content)
+                    tool_data = ""
+                    if hasattr(response, 'content'):
+                        tool_data = self.tools_manager.extract_tool(response.content)
+                    else:
+                        tool_data = self.tools_manager.extract_tool(response)
 
                     # If no tool call is found, return the final response
                     if not tool_data or ("None" in tool_data) or (tool_data == "{}"):
@@ -592,7 +596,12 @@ class Agent(AgentMeta):
                         AIMessage(content=full_content.content)
                     )
                     # After streaming is complete, process tool data
-                    tool_data = self.tools_manager.extract_tool(full_content.content)
+                    tool_data = ""
+                    if hasattr(full_content, 'content'):
+                        tool_data = self.tools_manager.extract_tool(full_content.content)
+                    else:
+                        tool_data = self.tools_manager.extract_tool(full_content)
+
                     if (tool_data is None) or (tool_data == "{}"):
                         logger.info(
                             f"No more tool calls needed. Completed in {iteration} iterations."
@@ -760,7 +769,11 @@ class Agent(AgentMeta):
                     self.in_conversation_history.add_message(response)
 
                     # Extract tool call from response
-                    tool_data = self.tools_manager.extract_tool(response.content)
+                    tool_data = ""
+                    if hasattr(response, 'content'):
+                        tool_data = self.tools_manager.extract_tool(response.content)
+                    else:
+                        tool_data = self.tools_manager.extract_tool(response)
 
                     # If no tool call is found, return the final response
                     if not tool_data or ("None" in tool_data) or (tool_data == "{}"):
