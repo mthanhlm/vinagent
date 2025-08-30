@@ -1,5 +1,5 @@
 # Agent memory
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent-docs/blob/main/docs/tutorials/get_started/add_memory.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/get_started/add_memory.ipynb)
 
 `Vinagent` features a `Graphical Memory` system that transforms messages into a structured knowledge graph composed of nodes, relationships, and edges. This memory can be organized into short-term and long-term components, allowing the Agent to retain and recall learned information effectively.
 

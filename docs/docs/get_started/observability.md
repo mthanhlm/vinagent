@@ -1,6 +1,6 @@
 # Agent Observability
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent-docs/blob/main/docs/tutorials/get_started/observability.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/get_started/observability.ipynb)
 
 Vinagent integrates with a local MLflow dashboard that can be used to visualize the intermediate messsages of each query. Therefore, it is an important feature for debugging.
 

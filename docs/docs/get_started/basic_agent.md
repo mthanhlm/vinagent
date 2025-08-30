@@ -1,5 +1,5 @@
 # Build a basic Chatbot
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent-docs/blob/main/docs/tutorials/get_started/basic_agent.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/get_started/basic_agent.ipynb)
 
 This tutorial introduce you how to create a simple Agent with minimal components and how to use them. This offers a general view on agent initialization and tool integration.
 
