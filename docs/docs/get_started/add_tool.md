@@ -13,9 +13,12 @@ Install `vinagent` library
 
 A tool is an important part of an AI agent. It allows your agent to connect to external data and perform tasks beyond the capabilities of an LLM. There are many ways to extend an agent with a new tool. However, Vinagent can connect to three types of tools that are available in its components.
 
-- Function tool: A Python function is registered into a specific agent using a decorator.
-- Module tool: A function from a Python module, saved in a specific folder, can be registered as a tool.
-- MCP tool: Create an MCP tool, which connects to an MCP server using the MCP protocol.
+
+- Function tools: These are integrated directly into your runtime code using the `@function_tool` decorator, without the need to store them in separate Python module files.
+
+- Module tools: Gathering many tools into an unique Python module. Using decorator `@primary_function` to state which functions are selected as Agent tools. Once registered, the modules can be imported and used in your runtime environment.
+
+- MCP tools: Connect Agent to thousands of third-party tools, enabling [MCP (Model Context Protocol) server](https://github.com/modelcontextprotocol/servers) like Google Drive, Gmail, Slack, Notion, Spotify,... to be used as external tools.
 
 
 ## Example of module tool
@@ -87,7 +90,7 @@ agent = Agent(
     If you set `is_reset_tools = True`, it will override the tool definitions every time an agent is reinitialized.
 
 
-## Asking tool
+Asking tool
 
 ```python
 # Step 2: invoke the agent
@@ -100,14 +103,6 @@ print(message.content)
 
 
 ## Function Tool
-
-Vinagent stands out for its flexibility in registering different types of tools, including:
-
-- Function tools: These are integrated directly into your runtime code using the `@function_tool` decorator, without the need to store them in separate Python module files.
-
-- Module tools: These are added via Python module files placed in the `vinagent.tools` directory. Once registered, the modules can be imported and used in your runtime environment.
-
-- MCP tools: These are tools registered through an [MCP (Model Context Protocol) server](https://github.com/modelcontextprotocol/servers), enabling external tool integration.
 
 In the following sections, let's explore how to register each type of tools in `vinagent` library. First, let's see how to register a function tool. You can customize any function in your runtime code as a powerful tool by using the `@function_tool` decorator.
 
