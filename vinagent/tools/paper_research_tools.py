@@ -1,7 +1,8 @@
 import arxiv
 from typing import Dict, Any, List
+from vinagent.register import primary_function
 
-
+@primary_function
 def paper_research(topic: str, max_results: int = 5) -> Dict[str, Any]:
     """
     Search for academic papers on arXiv and return paper information.

@@ -3,11 +3,13 @@ import json
 import os
 import tempfile
 from typing import List
+from vinagent.register import primary_function
 
 
 PAPER_DIR = os.path.join(tempfile.gettempdir(), "vinagent_papers")
 
 
+@primary_function
 def search_papers(topic: str, max_results: int = 5) -> List[str]:
     """
     Search for academic papers on arXiv based on a research topic and store their metadata locally.

@@ -3,8 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from vinagent.register import primary_function
 
-
+@primary_function
 def fetch_stock_data(
     symbol: str,
     start_date: str = "2020-01-01",
@@ -39,6 +40,7 @@ def fetch_stock_data(
         return None
 
 
+@primary_function
 def visualize_stock_data(
     symbol: str,
     start_date: str = "2020-01-01",
@@ -144,6 +146,7 @@ def visualize_stock_data(
     return fig
 
 
+@primary_function
 def plot_returns(
     symbol: str,
     start_date: str = "2020-01-01",

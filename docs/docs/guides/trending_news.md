@@ -41,7 +41,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from langchain_together import ChatTogether
 from googlenewsdecoder import gnewsdecoder
-
+from vinagent.register import primary_function
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -221,6 +221,7 @@ class TrendingTopics:
             return {"success": False, "error": f"Server error: {str(e)}"}
 
 
+@primary_function
 def trending_news_google_tools(
     top_k: int = 5,
     topic: str = "AI",
@@ -312,63 +313,63 @@ display(Markdown(message.artifact))
 ```
 
 
-# Where Will Nvidia Stock Be in 10 Years? - Yahoo Finance
-## What is new?
-Nvidia's generative AI business is still performing well, but there are signs of slowing growth. The company's revenue growth has decelerated to 69% from 262% in the previous fiscal quarter. Additionally, new technologies like self-driving cars and robotics could be key to Nvidia's long-term success, with potential annual revenue of $300 billion to $400 billion by 2035 for self-driving technology and $38 billion for humanoid robots.
+    # Where Will Nvidia Stock Be in 10 Years? - Yahoo Finance
+    ## What is new?
+    Nvidia's generative AI business is still performing well, but there are signs of slowing growth. The company's revenue growth has decelerated to 69% from 262% in the previous fiscal quarter. Additionally, new technologies like self-driving cars and robotics could be key to Nvidia's long-term success, with potential annual revenue of $300 billion to $400 billion by 2035 for self-driving technology and $38 billion for humanoid robots.
 
-## Highlight
-The key points of the article include: Nvidia's data center business represents 89% of its total revenue, the company's AI chip business may be slowing down, and new business verticals like robotics and self-driving cars could help diversify Nvidia's revenue streams. The company's automation and robotics segment has already shown significant growth, with first-quarter sales jumping 72% year over year to $567 million.
+    ## Highlight
+    The key points of the article include: Nvidia's data center business represents 89% of its total revenue, the company's AI chip business may be slowing down, and new business verticals like robotics and self-driving cars could help diversify Nvidia's revenue streams. The company's automation and robotics segment has already shown significant growth, with first-quarter sales jumping 72% year over year to $567 million.
 
-## Why it matters
-The potential slowing down of Nvidia's AI chip business and the company's ability to pivot to new technologies will have a significant impact on its long-term success. If Nvidia can successfully transition to new business verticals, it could maintain its dominant position in the market and continue to thrive. However, if it fails to adapt to changing conditions, it may experience stagnation or decline, as has been the case with other companies that have failed to evolve with technological advancements.
+    ## Why it matters
+    The potential slowing down of Nvidia's AI chip business and the company's ability to pivot to new technologies will have a significant impact on its long-term success. If Nvidia can successfully transition to new business verticals, it could maintain its dominant position in the market and continue to thrive. However, if it fails to adapt to changing conditions, it may experience stagnation or decline, as has been the case with other companies that have failed to evolve with technological advancements.
 
-## Link
-https://finance.yahoo.com/news/where-nvidia-stock-10-years-200000792.html
+    ## Link
+    https://finance.yahoo.com/news/where-nvidia-stock-10-years-200000792.html
 
-# Nvidia's latest DLSS revision reduces VRAM usage by 20% for upscaling — optimizations reduce overhead of more powerful transformer model - Tom's Hardware
-## What is new?
-Nvidia has released a new revision of its DLSS (Deep Learning Super Sampling) technology, which reduces VRAM usage by 20% for upscaling. This update optimizes the transformer model, making it more efficient and reducing its memory footprint. The new revision, DLSS 310.3.0, improves the transformer model's VRAM usage, bringing it closer to the older CNN model's memory impact.
+    # Nvidia's latest DLSS revision reduces VRAM usage by 20% for upscaling — optimizations reduce overhead of more powerful transformer model - Tom's Hardware
+    ## What is new?
+    Nvidia has released a new revision of its DLSS (Deep Learning Super Sampling) technology, which reduces VRAM usage by 20% for upscaling. This update optimizes the transformer model, making it more efficient and reducing its memory footprint. The new revision, DLSS 310.3.0, improves the transformer model's VRAM usage, bringing it closer to the older CNN model's memory impact.
 
-## Highlight
-The key points of this update include:
-* 20% reduction in VRAM usage for upscaling
-* Optimizations reduce the overhead of the more powerful transformer model
-* The new transformer model consumes 40% more memory than the CNN model, down from nearly twice as much
-* Memory consumption increases linearly with resolution, with the transformer model consuming 85.77MB of VRAM at 1080p and 307.37MB at 4K
+    ## Highlight
+    The key points of this update include:
+    * 20% reduction in VRAM usage for upscaling
+    * Optimizations reduce the overhead of the more powerful transformer model
+    * The new transformer model consumes 40% more memory than the CNN model, down from nearly twice as much
+    * Memory consumption increases linearly with resolution, with the transformer model consuming 85.77MB of VRAM at 1080p and 307.37MB at 4K
 
-## Why it matters
-This update is significant because it shows Nvidia's commitment to improving the efficiency of its DLSS technology. While the 20% reduction in VRAM usage may not have a noticeable impact on real-world applications, it demonstrates the company's efforts to optimize its technology for better performance. Additionally, the reduction in memory footprint could be beneficial for systems with limited VRAM, particularly at higher resolutions like 8K. This update also highlights the ongoing development and refinement of DLSS, which is now used in over 760 games and apps.
+    ## Why it matters
+    This update is significant because it shows Nvidia's commitment to improving the efficiency of its DLSS technology. While the 20% reduction in VRAM usage may not have a noticeable impact on real-world applications, it demonstrates the company's efforts to optimize its technology for better performance. Additionally, the reduction in memory footprint could be beneficial for systems with limited VRAM, particularly at higher resolutions like 8K. This update also highlights the ongoing development and refinement of DLSS, which is now used in over 760 games and apps.
 
-## Link
-https://www.tomshardware.com/pc-components/gpus/nvidias-latest-dlss-revision-reduces-vram-usage-by-20-percent-for-upscaling-optimizations-reduce-overhead-of-more-powerful-transformer-model
+    ## Link
+    https://www.tomshardware.com/pc-components/gpus/nvidias-latest-dlss-revision-reduces-vram-usage-by-20-percent-for-upscaling-optimizations-reduce-overhead-of-more-powerful-transformer-model
 
-# Nvidia executives cash out $1bn worth of shares - Financial Times
-## What is new?
-Nvidia executives have recently sold a substantial amount of shares, totaling $1 billion in value. This significant transaction has drawn attention to the company's internal dynamics and potential future directions.
+    # Nvidia executives cash out $1bn worth of shares - Financial Times
+    ## What is new?
+    Nvidia executives have recently sold a substantial amount of shares, totaling $1 billion in value. This significant transaction has drawn attention to the company's internal dynamics and potential future directions.
 
-## Highlight
-The key points of this news include the large-scale sale of Nvidia shares by its executives, amounting to $1 billion. This move could indicate a shift in the executives' confidence in the company's future prospects or a strategic decision to diversify their personal investments.
+    ## Highlight
+    The key points of this news include the large-scale sale of Nvidia shares by its executives, amounting to $1 billion. This move could indicate a shift in the executives' confidence in the company's future prospects or a strategic decision to diversify their personal investments.
 
-## Why it matters
-The sale of such a large volume of shares by Nvidia executives could have implications for investor confidence and the company's stock price. It may also signal potential changes in Nvidia's leadership or strategy, as significant insider transactions often attract scrutiny from investors and market analysts. Understanding the motivations behind this sale can provide insights into the company's future growth prospects and industry trends.
+    ## Why it matters
+    The sale of such a large volume of shares by Nvidia executives could have implications for investor confidence and the company's stock price. It may also signal potential changes in Nvidia's leadership or strategy, as significant insider transactions often attract scrutiny from investors and market analysts. Understanding the motivations behind this sale can provide insights into the company's future growth prospects and industry trends.
 
-## Link
-https://www.ft.com/content/36f346ad-c649-42ac-a6b6-1a8cc881e0bb
+    ## Link
+    https://www.ft.com/content/36f346ad-c649-42ac-a6b6-1a8cc881e0bb
 
-# Nvidia: The Music Is About To Stop (NASDAQ:NVDA) - Seeking Alpha
-## What is new?
-The article discusses the potential risks and challenges facing Nvidia Corporation, including macro and geopolitical risks, rising competition, and their potential impact on the company's performance. The authors, Bears of Wall Street, maintain a bearish stance on NVDA stock, citing these factors as reasons to sell.
+    # Nvidia: The Music Is About To Stop (NASDAQ:NVDA) - Seeking Alpha
+    ## What is new?
+    The article discusses the potential risks and challenges facing Nvidia Corporation, including macro and geopolitical risks, rising competition, and their potential impact on the company's performance. The authors, Bears of Wall Street, maintain a bearish stance on NVDA stock, citing these factors as reasons to sell.
 
-## Highlight
-The key points of the article include:
-* Nvidia's stock has risen around 15% since the last coverage before its Q1 earnings report
-* Macro and geopolitical risks could have a significant impact on Nvidia's performance
-* Rising competition may lead to lower demand for Nvidia's products in the future
-* The authors recommend a "Sell" position on NVDA stock due to these and other factors
+    ## Highlight
+    The key points of the article include:
+    * Nvidia's stock has risen around 15% since the last coverage before its Q1 earnings report
+    * Macro and geopolitical risks could have a significant impact on Nvidia's performance
+    * Rising competition may lead to lower demand for Nvidia's products in the future
+    * The authors recommend a "Sell" position on NVDA stock due to these and other factors
 
-## Why it matters
-The article's analysis matters because it highlights the potential risks and challenges that Nvidia faces, which could impact the company's future growth and profitability. Investors who are considering buying or holding NVDA stock should be aware of these risks and consider the authors' bearish stance when making their investment decisions. Additionally, the article's focus on macro and geopolitical risks, as well as rising competition, underscores the importance of considering broader market trends and industry dynamics when evaluating individual stocks.
+    ## Why it matters
+    The article's analysis matters because it highlights the potential risks and challenges that Nvidia faces, which could impact the company's future growth and profitability. Investors who are considering buying or holding NVDA stock should be aware of these risks and consider the authors' bearish stance when making their investment decisions. Additionally, the article's focus on macro and geopolitical risks, as well as rising competition, underscores the importance of considering broader market trends and industry dynamics when evaluating individual stocks.
 
-## Link
-https://seekingalpha.com/article/4797785-nvidia-the-music-is-about-to-stop
+    ## Link
+    https://seekingalpha.com/article/4797785-nvidia-the-music-is-about-to-stop
 

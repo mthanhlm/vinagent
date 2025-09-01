@@ -3,10 +3,11 @@ import json
 import os
 import tempfile
 from typing import List
+from vinagent.register import primary_function
 
 PAPER_DIR = os.path.join(tempfile.gettempdir(), "vinagent_papers")
 
-
+@primary_function
 def extract_paper_info(paper_id: str) -> str:
     """
     Retrieve detailed information about a specific academic paper using its arXiv ID.
