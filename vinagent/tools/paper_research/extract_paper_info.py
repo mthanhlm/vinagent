@@ -7,6 +7,7 @@ from vinagent.register import primary_function
 
 PAPER_DIR = os.path.join(tempfile.gettempdir(), "vinagent_papers")
 
+
 @primary_function
 def extract_paper_info(paper_id: str) -> str:
     """

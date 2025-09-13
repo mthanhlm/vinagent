@@ -1,5 +1,6 @@
 from vinagent.register import primary_function
 
+
 @primary_function
 def weight_of_bulldog():
     """The weight of a bulldog"""

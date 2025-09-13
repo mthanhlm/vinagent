@@ -11,7 +11,7 @@ class Node:
 
     @abstractmethod
     def exec(
-        self, state: Any, config: Optional[RunnableConfig] = None
+        self, state: Optional[Any], config: Optional[RunnableConfig] = None
     ) -> Union[dict, str]:
         raise NotImplementedError("Subclasses must implement exec method")
 

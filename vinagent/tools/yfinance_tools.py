@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from vinagent.register import primary_function
 
+
 @primary_function
 def fetch_stock_data(
     symbol: str,

@@ -137,7 +137,7 @@ class ToolManager:
                 "docstring": (func.__doc__ or "").strip(),
                 "module_path": module_path,
                 "tool_type": "function",
-                "tool_call_id": "tool_" + str(uuid.uuid4()),
+                "tool_call_id": "tool_" + str(uuid.uuid4())[:35],
                 "is_runtime": module_path == "__runtime__",
             }
 
@@ -204,14 +204,14 @@ class ToolManager:
             tool["tool_type"] = "mcp"
             # tool['mcp_client_connections'] = client.connections
             # tool['mcp_server_name'] = server_name
-            tool["tool_call_id"] = "tool_" + str(uuid.uuid4())
+            tool["tool_call_id"] = "tool_" + str(uuid.uuid4())[:35]
             return tool
 
         new_tools = [convert_mcp_tool(mcp_tool.__dict__) for mcp_tool in all_tools]
         tools = self.load_tools()
         for tool in new_tools:
             tools[tool["tool_name"]] = tool
-            tools[tool["tool_name"]]["tool_call_id"] = "tool_" + str(uuid.uuid4())
+            tools[tool["tool_name"]]["tool_call_id"] = "tool_" + str(uuid.uuid4())[:35]
             logger.info(f"Registered {tool['tool_name']}:\n{tool}")
         self.save_tools(tools)
         logger.info(f"Completed registration for mcp module {server_name}")
@@ -271,8 +271,11 @@ class ToolManager:
         )
 
         response = self.llm.invoke(prompt)
-
-        response_text = response.content.strip()
+        response_text = ""
+        if hasattr(response, "content"):
+            response_text = response.content.strip()
+        else:
+            response_text = response.strip()
 
         # Remove markdown code fences if present
         if response_text.startswith("```"):
@@ -292,7 +295,6 @@ class ToolManager:
         except (ValueError, SyntaxError):
             # Fallback: extract the first JSON object/list from text
             extracted = self.extract_tool(response_text)
-            print(f"extracted: {extracted}")
             if extracted:
                 try:
                     new_tools = ast.literal_eval(extracted)
@@ -364,7 +366,7 @@ class ToolManager:
             tool["module_path"] = module_path
             tool["tool_type"] = "module"
             tools[tool["tool_name"]] = tool
-            tools[tool["tool_name"]]["tool_call_id"] = "tool_" + str(uuid.uuid4())
+            tools[tool["tool_name"]]["tool_call_id"] = "tool_" + str(uuid.uuid4())[:35]
             logger.info(f"Registered {tool['tool_name']}:\n{tool}")
 
         self.save_tools(tools)

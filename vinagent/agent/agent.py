@@ -54,6 +54,11 @@ class AgentMeta(ABC):
         """Asynchronously invoke the agent's main function"""
         pass
 
+    @abstractmethod
+    def stream(self, query: str, *args, **kwargs) -> Any:
+        """Streaming the agent's main function"""
+        pass
+
 
 def is_jupyter_notebook():
     try:
@@ -84,6 +89,7 @@ class Agent(AgentMeta):
         tools_path: Path = Path("templates/tools.json"),
         is_reset_tools=False,
         description: str = "You are a helpful assistant who can use the following tools to complete a task.",
+        instruction: str = "You should answer the question relying on your determined skills",
         skills: list[str] = ["You can answer the user question with tools"],
         flow: list[str] = [],
         state_schema: type[Any] = None,
@@ -113,6 +119,9 @@ class Agent(AgentMeta):
 
         description : str, optional
             A brief description of the assistant's capabilities. Defaults to a general helpful assistant message.
+
+        instruction: str, optional
+            An instruction for the assistant to follow. Defaults to an empty string.
 
         skills : list[str], optional
             A list of skills or abilities describing what the assistant can do. Defaults to a basic tool-usage skill.
@@ -151,6 +160,7 @@ class Agent(AgentMeta):
         self.llm = llm
         self.tools = tools
         self.description = description
+        self.instruction = instruction
         self.skills = skills
 
         # Initialize Agent flow by Langgraph
@@ -229,7 +239,7 @@ class Agent(AgentMeta):
         elif self.mcp_client:
             mcp_tools = await self.tools_manager.register_mcp_tool(self.mcp_client)
             logger.info(f"Successfully connected to mcp server!")
-        return "Successfully connected to mcp server!"
+        return f"Successfully connected to mcp server! mcp_tools: {mcp_tools}"
 
     def initialize_flow(self, state_schema: TypedDict, config_schema: TypedDict):
         # Validate state_schema if provided
@@ -310,7 +320,6 @@ class Agent(AgentMeta):
     def prompt_tool(
         self, query: str, tool_call: str, tool_message: ToolMessage, *args, **kwargs
     ) -> str:
-        print("tool_message: ", tool_message)
         tool_template = (
             f"- Question: {query}\n"
             f"- Tool Used: {tool_call}\n"
@@ -319,13 +328,40 @@ class Agent(AgentMeta):
         )
         return tool_template
 
+    def system_prompt(self):
+        skills = "- " + "- ".join(self.skills)
+        content = (
+            f"{self.description}\nYour skills:\n{skills}\nInstruction:\n{self.instruction}"
+            if self.instruction
+            else f"{self.description}\nYour skills:\n{skills}"
+        )
+        system_prompt = SystemMessage(content=content)
+        return system_prompt
+
+    def initialize_state(
+        self, query: str, user_id: str, thread_id: str = 123, **kwargs
+    ):
+        input_state = (
+            kwargs["input_state"]
+            if "input_state" in kwargs
+            else {"messages": [{"role": "user", "content": query}]}
+        )
+
+        config = (
+            kwargs["config"]
+            if "config" in kwargs
+            else {
+                "configurable": {"user_id": user_id},
+                "thread_id": thread_id,
+            }
+        )
+        return {"input": input_state, "config": config}
+
     def invoke(
         self,
         query: str,
         is_save_memory: bool = False,
         user_id: str = "unknown_user",
-        token: str = None,
-        secret_key: str = None,
         max_iterations: int = 10,  # Add max iterations to prevent infinite loops
         is_tool_formatted: bool = True,
         max_history: int = None,
@@ -338,8 +374,6 @@ class Agent(AgentMeta):
             query (str): The input query or task description provided by the user.
             is_save_memory (bool, optional): Flag to determine if the conversation should be saved to memory. Defaults to False.
             user_id (str, optional): Identifier for the user making the request. Defaults to "unknown_user".
-            token (str, optional): Authentication token for the user. Defaults to None.
-            secret_key (str, optional): Secret key for authentication. Defaults to None.
             max_iterations (int, optional): Maximum number of tool call iterations to prevent infinite loops. Defaults to 10.
             is_tool_formatted (bool, optional): Modifying the output Tool to become more human-preferred. If True, it needs one next llm invoke to format answer, else directly return tool_message. Defaults to True.
             max_history (int, optional): The maximum number of messages. Defaults to None.
@@ -365,25 +399,15 @@ class Agent(AgentMeta):
 
         try:
             if hasattr(self, "compiled_graph"):
-                config = (
-                    kwargs["config"]
-                    if "config" in kwargs
-                    else {
-                        "configurable": {"user_id": user_id},
-                        "thread_id": "123",
-                    }
+                thread_id = (
+                    kwargs.get("thread_id") if hasattr(self, "thread_id") else "123"
                 )
-
-                input_state = (
-                    kwargs["input_state"]
-                    if "input_state" in kwargs
-                    else {"messages": [{"role": "user", "content": query}]}
+                input_state = self.initialize_state(
+                    query=query, user_id=user_id, thread_id=thread_id
                 )
 
                 try:
-                    result = self.compiled_graph.invoke(
-                        input=input_state, config=config
-                    )
+                    result = self.compiled_graph.invoke(**input_state)
                     self.in_conversation_history.add_message(result)
                     if self.memory and is_save_memory:
                         self.save_memory(message=result, user_id=self._user_id)
@@ -403,11 +427,9 @@ class Agent(AgentMeta):
                     prompt = self.prompt_template(
                         query=current_query, user_id=self._user_id
                     )
-                    skills = "- " + "- ".join(self.skills)
+                    system_prompt = self.system_prompt()
                     messages = [
-                        SystemMessage(
-                            content=f"{self.description}\nHere is your skills:\n{skills}"
-                        ),
+                        system_prompt,
                         HumanMessage(content=prompt),
                     ]
 
@@ -419,11 +441,10 @@ class Agent(AgentMeta):
                         max_history=max_history
                     )
                     response = self.llm.invoke(history)
-                    self.in_conversation_history.add_message(response)
 
                     # Extract tool call from response
                     tool_data = ""
-                    if hasattr(response, 'content'):
+                    if hasattr(response, "content"):
                         tool_data = self.tools_manager.extract_tool(response.content)
                     else:
                         tool_data = self.tools_manager.extract_tool(response)
@@ -440,6 +461,12 @@ class Agent(AgentMeta):
                     # Parse and execute tool call
                     tool_call = json.loads(tool_data)
                     logger.info(f"Executing tool call: {tool_call}")
+                    # Adapt tool-call for gpt4o model by adding tool_calls argument into response
+                    # Note: It must be preceded to adding tool_message into history.
+                    response = self.adapter_ai_response_with_tool_calls(
+                        response, tool_call
+                    )
+                    self.in_conversation_history.add_message(response)
 
                     tool_message = asyncio.run(
                         self.tools_manager._execute_tool(
@@ -493,8 +520,6 @@ class Agent(AgentMeta):
         query: str,
         is_save_memory: bool = False,
         user_id: str = "unknown_user",
-        token: str = None,
-        secret_key: str = None,
         max_iterations: int = 10,  # Add max iterations to prevent infinite loops
         is_tool_formatted: bool = True,
         max_history: int = None,
@@ -507,8 +532,6 @@ class Agent(AgentMeta):
             query (str): The input query or task description provided by the user.
             is_save_memory (bool, optional): Flag to determine if the conversation should be saved to memory. Defaults to False.
             user_id (str, optional): Identifier for the user making the request. Defaults to "unknown_user".
-            token (str, optional): Authentication token for the user. Defaults to None.
-            secret_key (str, optional): Secret key for authentication. Defaults to None.
             max_iterations (int, optional): Maximum number of tool call iterations to prevent infinite loops. Defaults to 10.
             is_tool_formatted (bool, optional): Modifying the output Tool to become more human-preferred. If True, it needs one next llm invoke to format answer, else directly return tool_message. Defaults to True.
             max_history (int, optional): Number of last messages in the history. Defaults to None.
@@ -533,22 +556,14 @@ class Agent(AgentMeta):
         try:
             if hasattr(self, "compiled_graph"):
                 result = []
-                config = (
-                    kwargs["config"]
-                    if "config" in kwargs
-                    else {
-                        "configurable": {"user_id": user_id},
-                        "thread_id": "123",
-                    }
+                thread_id = (
+                    kwargs.get("thread_id") if hasattr(self, "thread_id") else "123"
                 )
-                input_state = (
-                    kwargs["input_state"]
-                    if "input_state" in kwargs
-                    else {"messages": [{"role": "user", "content": query}]}
+                input_state = self.initialize_state(
+                    query=query, user_id=user_id, thread_id=thread_id
                 )
-                for chunk in self.compiled_graph.stream(
-                    input=input_state, config=config
-                ):
+
+                for chunk in self.compiled_graph.stream(**input_state):
                     for v in chunk.values():
                         if v:
                             result += v["messages"]
@@ -572,11 +587,9 @@ class Agent(AgentMeta):
                     prompt = self.prompt_template(
                         query=current_query, user_id=self._user_id
                     )
-                    skills = "- " + "- ".join(self.skills)
+                    system_prompt = self.system_prompt()
                     messages = [
-                        SystemMessage(
-                            content=f"{self.description}\nHere is your skills:\n{skills}"
-                        ),
+                        system_prompt,
                         HumanMessage(content=prompt),
                     ]
 
@@ -592,13 +605,14 @@ class Agent(AgentMeta):
                         full_content += chunk
                         yield chunk
 
-                    self.in_conversation_history.add_message(
-                        AIMessage(content=full_content.content)
-                    )
+                    response = AIMessage(content=full_content.content)
+
                     # After streaming is complete, process tool data
                     tool_data = ""
-                    if hasattr(full_content, 'content'):
-                        tool_data = self.tools_manager.extract_tool(full_content.content)
+                    if hasattr(full_content, "content"):
+                        tool_data = self.tools_manager.extract_tool(
+                            full_content.content
+                        )
                     else:
                         tool_data = self.tools_manager.extract_tool(full_content)
 
@@ -615,6 +629,13 @@ class Agent(AgentMeta):
 
                     # Parse and execute tool
                     tool_call = json.loads(tool_data)
+                    # Adapt tool-call for gpt4o model by adding tool_calls argument into response
+                    # Note: It must be preceded to adding tool_message into history.
+                    response = self.adapter_ai_response_with_tool_calls(
+                        response, tool_call
+                    )
+                    self.in_conversation_history.add_message(response)
+
                     logger.info(f"Executing streaming tool call: {tool_call}")
                     tool_message = asyncio.run(
                         self.tools_manager._execute_tool(
@@ -669,8 +690,6 @@ class Agent(AgentMeta):
         query: str,
         is_save_memory: bool = False,
         user_id: str = "unknown_user",
-        token: str = None,
-        secret_key: str = None,
         max_iterations: int = 10,  # Add max iterations to prevent infinite loops
         is_tool_formatted: bool = True,
         max_history: int = None,
@@ -683,8 +702,6 @@ class Agent(AgentMeta):
             query (str): The input query or task description provided by the user.
             is_save_memory (bool, optional): Flag to determine if the conversation should be saved to memory. Defaults to False.
             user_id (str, optional): Identifier for the user making the request. Defaults to "unknown_user".
-            token (str, optional): Authentication token for the user. Defaults to None.
-            secret_key (str, optional): Secret key for authentication. Defaults to None.
             max_iterations (int, optional): Maximum number of tool call iterations to prevent infinite loops. Defaults to 10.
             is_tool_formatted (bool, optional): Modifying the output Tool to become more human-preferred. If True, it needs one next llm invoke to format answer, else directly return tool_message. Defaults to True.
             max_history (int, None): Number of maximum history messages. Defaults to None.
@@ -710,24 +727,15 @@ class Agent(AgentMeta):
 
         try:
             if hasattr(self, "compiled_graph"):
-                config = (
-                    kwargs["config"]
-                    if "config" in kwargs
-                    else {
-                        "configurable": {"user_id": user_id},
-                        "thread_id": "123",
-                    }
+                thread_id = (
+                    kwargs.get("thread_id") if hasattr(self, "thread_id") else "123"
+                )
+                input_state = self.initialize_state(
+                    query=query, user_id=user_id, thread_id=thread_id
                 )
 
-                input_state = (
-                    kwargs["input_state"]
-                    if "input_state" in kwargs
-                    else {"messages": [{"role": "user", "content": query}]}
-                )
                 try:
-                    result = await self.compiled_graph.ainvoke(
-                        input=input_state, config=config
-                    )
+                    result = await self.compiled_graph.ainvoke(**input_state)
                     self.in_conversation_history.add_message(result)
                     if self.memory and is_save_memory:
                         self.save_memory(message=result, user_id=self._user_id)
@@ -749,11 +757,9 @@ class Agent(AgentMeta):
                     prompt = self.prompt_template(
                         query=current_query, user_id=self._user_id
                     )
-                    skills = "- " + "- ".join(self.skills)
+                    system_prompt = self.system_prompt()
                     messages = [
-                        SystemMessage(
-                            content=f"{self.description}\nHere is your skills:\n{skills}"
-                        ),
+                        system_prompt,
                         HumanMessage(content=prompt),
                     ]
 
@@ -765,12 +771,10 @@ class Agent(AgentMeta):
 
                     # Get LLM response
                     response = asyncio.to_thread(self.llm.ainvoke(input=history))
-                    # response = await self.llm.ainvoke(history)
-                    self.in_conversation_history.add_message(response)
 
                     # Extract tool call from response
                     tool_data = ""
-                    if hasattr(response, 'content'):
+                    if hasattr(response, "content"):
                         tool_data = self.tools_manager.extract_tool(response.content)
                     else:
                         tool_data = self.tools_manager.extract_tool(response)
@@ -787,6 +791,12 @@ class Agent(AgentMeta):
                     # Parse and execute tool call
                     tool_call = json.loads(tool_data)
                     logger.info(f"Executing async tool call: {tool_call}")
+                    # Adapt tool-call for gpt4o model by adding tool_calls argument into response
+                    # Note: It must be preceded to adding tool_message into history.
+                    response = self.adapter_ai_response_with_tool_calls(
+                        response, tool_call
+                    )
+                    self.in_conversation_history.add_message(response)
 
                     tool_message = await self.tools_manager._execute_tool(
                         tool_name=tool_call["tool_name"],
@@ -859,3 +869,14 @@ class Agent(AgentMeta):
 
     def function_tool(self, func: Any):
         return self.tools_manager.register_function_tool(func)
+
+    def adapter_ai_response_with_tool_calls(self, response, tool_call):
+        adapt_tool = {}
+        all_tools = self.tools_manager.load_tools()
+        selected_tool = all_tools[tool_call["tool_name"]]
+        adapt_tool["name"] = selected_tool["tool_name"]
+        adapt_tool["args"] = tool_call["arguments"]
+        adapt_tool["type"] = "tool_call"
+        adapt_tool["id"] = selected_tool["tool_call_id"]
+        response.tool_calls = [adapt_tool]
+        return response
