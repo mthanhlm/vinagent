@@ -233,7 +233,7 @@ agent_staff = AgentStaff(
 
 ![](images/template_multi_agent.png)
 
-_Hierarchiral structure seperates out each agent memory and tool according._
+_Hierarchiral structure seperates out each agent memory and tool accordingly._
 
 ## Human-in-the-loop
 
