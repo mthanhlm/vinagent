@@ -13,7 +13,7 @@ Therefore, to tackle these, it is necessary to break your application into multi
 - Specialization: Expert agents improve domain performance.
 - Control: Explicit communication improves transparency and governance.
 
-![](../images/multi_agent_architectures.png)
+![](./images/multi_agent_architectures.png)
 
 Source: [Langchain blog](https://langchain-ai.github.io/langgraph/concepts/multi_agent/)
 
@@ -89,7 +89,7 @@ To showcase the efficiency of Vinagent’s multi-agent system, we use the real-w
 
 - Positive & Neutral Agents: Since these cases are non-critical, they process the feedback accordingly without escalation.
 
-![](../images/customer_service_support.png)
+![](./images/customer_service_support.png)
 
 Let's initialize each specific agent class by implementing `AgentNode`, each one should re-define `exec` method to deal with the return answer.
 
@@ -231,7 +231,7 @@ agent_staff = AgentStaff(
 !!! note 
     Organizing each agent with its own dedicated folder for memory and tools creates a secure, isolated architecture that prevents interference and conflicts between agents. This separation ensures safety during updates since you can modify one agent's memory and tools without affecting others, while also enabling specialized customization for each agent's specific role. The folder-based approach optimizes performance by allowing agents to load only what they need and operate in parallel without stepping on each other's data. Most importantly, this structure provides robust security and safety guarantees, ensuring that each agent's sensitive data and specialized tools remain protected and accessible only when appropriate.
 
-![](../images/template_multi_agent.png)
+![](./images/template_multi_agent.png)
 
 _Hierarchiral structure seperates out each agent memory and tool accordingly._
 
@@ -296,7 +296,7 @@ crew = CrewAgent(
 crew.compiled_graph
 ```
     
-![png](../images/multi_agent_15_0.png)
+![png](./images/multi_agent_15_0.png)
     
 This generates a visual representation of your multi-agent workflow, helping you understand and debug the system architecture.
 
