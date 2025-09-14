@@ -58,6 +58,8 @@ nav:
       - Research Agent: guides/paper_research.md
     - Legal Field:
       - Legal Agent: guides/legal_assistant.md
+    - Ecommerce Usercase:
+      - Customer Care Multi-Agent: guides/customer_care.md
     - RAG:
       - Agent RAG: get_started/agent_rag.md
     
