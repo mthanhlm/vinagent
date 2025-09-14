@@ -51,6 +51,14 @@ With its modular tool system, you can easily extend your agent's capabilities by
       <td align="center">❌</td>
       <td align="center">✅</td>
     </tr>
+     <tr>
+      <td align="center">Multi Agent</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
     <tr>
       <td align="center">Workflow</td>
       <td align="center">✅</td>
@@ -138,6 +146,15 @@ The following are specifically designed components:
 - **Prompt Optimization**: Vinagent integrates automatic prompt optimization features, enhancing accuracy for Agents. This ensures the Agent operates effectively even with specialized tasks.
 Observability: Allows monitoring of the Agent’s processing information on-premise and is compatible with Jupyter Notebook. You can measure total processing time, the number of input/output tokens, as well as LLM model information at each step in the workflow. This detailed observability feature is crucial for debugging and optimizing the Agent.
 
+## Support Multi-agent
+
+![](asset/multi_agent_architectures.png)
+
+Vinagent designs an advanced multi-agent solution with key strengths:
+- Specialized Agents: Each [single agent](https://datascienceworld-kan.github.io/vinagent/#component-overview) is fully equipped with its own LLM, tools, memory, skills, and authentication layer.
+- Shared Conversation: Agents collaborate seamlessly in the same conversation, enabling them to capture and utilize each other’s context.
+- Human-in-the-Loop: Users can directly participate and interact within the agent workflow.
+- Customizable Order: A Crew class allows flexible control over the sequence of agents in a conversation.
 
 ## Vinagent ecosystem
 

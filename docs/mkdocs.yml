@@ -43,6 +43,7 @@ nav:
         - 5. Prebuilt Agent: get_started/react_agent.md
         - 6. Security: get_started/authen_layer.md
         - 7. Observability: get_started/observability.md
+        - 8. Multi Agent: get_started/multi_agent.md
       - Run local ReactJS App: get_started/local_run.md
     - Agent Development:
       - Workflow & Agent: get_started/workflow_and_agent.md
