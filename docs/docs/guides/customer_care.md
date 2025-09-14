@@ -1,4 +1,4 @@
-# Multi-Agent
+# Ecommercial Customer Care Multi-Agent System
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/get_started/multi_agent.ipynb)
 
 May be, you are familiar with single agent design of Vinagent, which uses an LLM as brain to control tools and workflow of an application. However, as you develop many operational systems in many real enterprises, the operational procedure might be very complex, which requires a transformation from single-agent into multi-agent system over time. For example, you may have to tackle with the following challanges:
