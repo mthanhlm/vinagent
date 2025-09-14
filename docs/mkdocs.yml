@@ -63,7 +63,7 @@ nav:
     - Ecommerce Usercase:
       - Customer Care Multi-Agent: guides/customer_care.md
     - RAG:
-      - Agent RAG: get_started/agent_rag.md
+      - Agent RAG: guides/agent_rag.md
     
   - Reference: 
     - Agent: reference/agent.md
