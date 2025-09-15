@@ -169,7 +169,9 @@ supervisor = Supervisor(
         "Assign task to member agents",
     ],
     tools=[
-        'vinagent/tools/hello.py'
+        "vinagent/tools/hello.py"
+        # Let's provide an absolute path on local, you can download tool at: 
+        # https://github.com/datascienceworld-kan/vinagent/blob/main/vinagent/tools/hello.py
     ],
     memory_path="vinagent/templates/mutli_agent/supervisor/memory.json",
     tools_path = "vinagent/templates/mutli_agent/supervisor/tool.json"
@@ -222,7 +224,11 @@ agent_staff = AgentStaff(
         "Give an apology email to user",
         "Confirm customer number phone again"
     ],
-    tools=["vinagent/vinagent/tools/crm_system/apology_incorrect_delivery_email.py"],
+    tools=[
+        "/Users/phamdinhkhanh/Documents/Courses/Manus/vinagent/vinagent/tools/crm_system/apology_incorrect_delivery_email.py"
+        # Let's provide an absolute path on local. You can download tool at: 
+        # https://github.com/datascienceworld-kan/vinagent/blob/main/vinagent/tools/crm_system/apology_incorrect_delivery_email.py
+    ],
     memory_path="vinagent/templates/mutli_agent/staff/memory.json",
     tools_path = "vinagent/templates/mutli_agent/staff/tool.json"
 )
