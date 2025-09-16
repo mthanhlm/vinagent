@@ -151,9 +151,13 @@ Observability: Allows monitoring of the Agent’s processing information on-prem
 ![](asset/multi_agent_architectures.png)
 
 Vinagent designs an advanced multi-agent solution with key strengths:
+
 - Specialized Agents: Each [single agent](https://datascienceworld-kan.github.io/vinagent/#component-overview) is fully equipped with its own LLM, tools, memory, skills, and authentication layer.
+
 - Shared Conversation: Agents collaborate seamlessly in the same conversation, enabling them to capture and utilize each other’s context.
+
 - Human-in-the-Loop: Users can directly participate and interact within the agent workflow.
+
 - Customizable Order: A Crew class allows flexible control over the sequence of agents in a conversation.
 
 ## Vinagent ecosystem
