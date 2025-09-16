@@ -1,6 +1,6 @@
 # Visualize and Analyze Stock Trend
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/tutorials/guides/1.Visualize_and_Analyze_Stock_Trending.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/guides/1.Visualize_and_Analyze_Stock_Trending.ipynb)
 
 This tutorial will guide you through the steps of visualizing and analyzing stock trends using Python. We will use the Yahoo Finance API to fetch stock data and plot it using Matplotlib.
 

@@ -1,6 +1,6 @@
 # Banking and Finance Agent
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/tutorials/guides/banking_agent.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/docs/tutorials/guides/banking_agent.ipynb)
 
 In today's fast-paced financial world, the ability to quickly extract insights from data can make or flaw business decisions. Imagine having an AI assistant that can instantly answer questions like "Which customer has the highest deposit balance?" to take care of or "Show me the total balance of all loans, deposits today" to measure the growth rate. You can issue business policies or regulations just in day or in real-time. It is feasible by using Vinagent to automatically drive SQL engine to obtain the trust and worthy answers. Therefore, your organization will gain long-term benefits compared to those without ultilize AI Agent.
 
