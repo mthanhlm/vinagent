@@ -1,6 +1,6 @@
 # Legal Assistant with vinagent
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent-docs/blob/main/docs/tutorials/guides/4.Legal_Assistant.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/tutorials/guides/4.Legal_Assistant.ipynb)
 
 This tutorial demonstrates how to build a comprehensive legal assistant using vinagent that can help attorneys and legal professionals with various tasks including:
 

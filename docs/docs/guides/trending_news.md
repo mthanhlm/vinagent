@@ -1,6 +1,6 @@
 # Finding Trending new on Google New
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent-docs/blob/main/docs/tutorials/guides/2.Trending_New.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/datascienceworld-kan/vinagent/blob/main/docs/tutorials/guides/2.Trending_New.ipynb)
 
 Keeping up with trending information about a specific company is crucial for investment decisions. By collecting a set of key news items in a timely manner, you can proactively mitigate risks and seize lucrative opportunities. This tutorial will guide you through designing a Trending Search Agent to collect news efficiently and on time.
 
